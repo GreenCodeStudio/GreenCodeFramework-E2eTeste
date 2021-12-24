@@ -55,10 +55,12 @@ function readDir(path) {
     log('tests:', tests);
     const testObjects = tests.map(x => new x(driver));
     for (const test of testObjects) {
-        await test.prepareTest();
+        if (test.prepareTest)
+            await test.prepareTest();
     }
     for (const test of testObjects) {
-        await test.mainTest();
+        if (test.mainTest)
+            await test.mainTest();
     }
 
     driver.quit();
