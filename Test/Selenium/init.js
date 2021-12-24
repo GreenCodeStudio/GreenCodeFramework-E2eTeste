@@ -69,7 +69,7 @@ function readDir(path) {
             }
         }
         log('tests completed');
-
+        process.exit(0)//tmp
         driver.quit();
         xvfb.stopSync();
     } catch (e) {
