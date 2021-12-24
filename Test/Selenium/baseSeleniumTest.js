@@ -21,9 +21,14 @@ module.exports = class BaseSeleniumTest {
     asleep(x) {
         return new Promise(resolve => setTimeout(resolve, x))
     }
-    assert(val){
-        if(!val){
+
+    assert(val) {
+        if (!val) {
             process.exit(1);
         }
+    }
+
+    async openURL(url) {
+        await this.driver.get('http://localhost:8080' + url);
     }
 }
