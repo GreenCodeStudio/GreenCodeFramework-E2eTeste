@@ -35,40 +35,45 @@ function readDir(path) {
 }
 
 (async function run() {
-    var Xvfb = require('xvfb');
-    var xvfb = new Xvfb();
-    xvfb.startSync();
+    try {
+        var Xvfb = require('xvfb');
+        var xvfb = new Xvfb();
+        xvfb.startSync();
 
-    let driver = await new Builder().forBrowser('firefox').build();
+        let driver = await new Builder().forBrowser('firefox').build();
 
-    const files = await readDir("./modules/");
-    let tests = [];
-    for (const file of files) {
-        const testPath = path.resolve(process.cwd(), `./modules/${file}/Test/Selenium/index.js`);
-        log(testPath);
-        if (fs.existsSync(testPath)) {
-            const obj = require(testPath);
-            log('obj:', obj);
-            tests.push(obj)
+        const files = await readDir("./modules/");
+        let tests = [];
+        for (const file of files) {
+            const testPath = path.resolve(process.cwd(), `./modules/${file}/Test/Selenium/index.js`);
+            log(testPath);
+            if (fs.existsSync(testPath)) {
+                const obj = require(testPath);
+                log('obj:', obj);
+                tests.push(obj)
+            }
         }
-    }
-    log('tests:', tests);
-    const testObjects = tests.map(x => new x(driver));
-    for (const test of testObjects) {
-        if (test.prepareTest) {
-            log('prepareTest:', test);
-            await test.prepareTest();
+        log('tests:', tests);
+        const testObjects = tests.map(x => new x(driver));
+        for (const test of testObjects) {
+            if (test.prepareTest) {
+                log('prepareTest:', test);
+                await test.prepareTest();
+            }
         }
-    }
-    for (const test of testObjects) {
-        if (test.mainTest) {
-            log('mainTest:', test);
-            await test.mainTest();
-            await this.asleep(100);
+        for (const test of testObjects) {
+            if (test.mainTest) {
+                log('mainTest:', test);
+                await test.mainTest();
+                await new Promise(resolve => setTimeout(resolve, 100))
+            }
         }
-    }
-    log('tests completed');
+        log('tests completed');
 
-    driver.quit();
-    xvfb.stopSync();
+        driver.quit();
+        xvfb.stopSync();
+    } catch (e) {
+        log('exception:', e);
+        process.exit(1)
+    }
 })();
