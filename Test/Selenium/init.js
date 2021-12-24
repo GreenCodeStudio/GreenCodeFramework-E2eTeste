@@ -55,13 +55,19 @@ function readDir(path) {
     log('tests:', tests);
     const testObjects = tests.map(x => new x(driver));
     for (const test of testObjects) {
-        if (test.prepareTest)
+        if (test.prepareTest) {
+            log('prepareTest:', test);
             await test.prepareTest();
+        }
     }
     for (const test of testObjects) {
-        if (test.mainTest)
+        if (test.mainTest) {
+            log('mainTest:', test);
             await test.mainTest();
+            await this.asleep(100);
+        }
     }
+    log('tests completed');
 
     driver.quit();
     xvfb.stopSync();
