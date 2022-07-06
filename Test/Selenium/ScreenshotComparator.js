@@ -27,7 +27,10 @@ module.exports = {
                 let diffImg = await sharp('./ApprovedScrenshots/' + name)
                     .composite([{
                         input: './screens/' + name, top: 0, left: 0, blend: 'difference'
-                    },]).toBuffer()
+                    },]).toBuffer();
+                try {
+                    console.log([...diffImg].slice(0, 10))
+                }catch(ex){console.error(ex)}
                 diff = `data:image/png;base64,${diffImg.toString('base64')}`
             }
             return {approved, current, diff};
