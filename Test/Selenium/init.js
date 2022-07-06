@@ -5,6 +5,7 @@ const fs = require('fs');
 const net = require('net');
 const Xvfb = require("xvfb");
 const path = require("path");
+const {ScreenshotComparator} = require("./ScreenshotComparator");
 asleep(60000).then(() => process.exit(1));
 
 function asleep(x) {
@@ -72,6 +73,7 @@ function readDir(path) {
         process.exit(0)//tmp
         driver.quit();
         xvfb.stopSync();
+        await ScreenshotComparator.generateHtml();
     } catch (e) {
         log('exception:', e);
         process.exit(1)
