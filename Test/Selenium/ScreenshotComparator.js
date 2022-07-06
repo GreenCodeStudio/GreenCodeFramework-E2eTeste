@@ -10,7 +10,7 @@ module.exports = {
         let list = await this.listComparsion();
         list.sort((a, b) => a.entropy - b.entropy);
         for (const listComparsionElement of list) {
-            html += `<div><h2>${list.name}</h2><img src="${listComparsionElement.diff}"><img src="${listComparsionElement.approved}"><img src="${listComparsionElement.current}"></div>`
+            html += `<div><h2>${listComparsionElement.name}</h2><img src="${listComparsionElement.diff}"><img src="${listComparsionElement.approved}"><img src="${listComparsionElement.current}"></div>`
             diffNoticed = diffNoticed || listComparsionElement.diffNoticed;
         }
         await fs.writeFile('./screens/screnshotComparsion.html', html);
