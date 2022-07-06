@@ -1,5 +1,6 @@
 const sharp = require("sharp");
 const fs = require("fs").promises;
+const fsClassic=require("fs");
 
 module.exports = {
     async generateHtml() {
@@ -18,9 +19,9 @@ module.exports = {
         console.log({names})
         return await Promise.all(names.map(async name => {
             let approved = null;
-            if (await fs.exists('./ApprovedScrenshots/' + name)) approved = 'data:image/png;base64,' + await fs.readFile('./ApprovedScrenshots/' + name, {encoding: 'base64'});
+            if (fsClassic.existsSync('./ApprovedScrenshots/' + name)) approved = 'data:image/png;base64,' + await fs.readFile('./ApprovedScrenshots/' + name, {encoding: 'base64'});
             let current = null;
-            if (await fs.exists('./screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
+            if (fsClassic.existsSync('./screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
             let diff = null;
             if (approved && current) {
                 let diffImg = sharp('./ApprovedScrenshots/' + name)
