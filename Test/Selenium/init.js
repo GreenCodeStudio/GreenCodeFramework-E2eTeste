@@ -70,7 +70,10 @@ function readDir(path) {
             }
         }
         log('tests completed');
-        await ScreenshotComparator.generateHtml();
+        if(await ScreenshotComparator.generateHtml()){
+            console.log('found significant change on screnshots')
+            process.exit(2)
+        }
         driver.quit();
         xvfb.stopSync();
         process.exit(0)//tmp
