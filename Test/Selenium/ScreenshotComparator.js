@@ -7,7 +7,7 @@ module.exports = {
         for (const listComparsionElement of await this.listComparsion()) {
             html += `<div><img src="${listComparsionElement.diff}"><img src="${listComparsionElement.approved}"><img src="${listComparsionElement.current}"></div>`
         }
-        fs.writeFile('./screnshotComparsion.html', html, '', (err) => {
+       await  fs.writeFile('./screens/screnshotComparsion.html', html, '', (err) => {
             this.log(err);
         });
     }, async listComparsion() {
