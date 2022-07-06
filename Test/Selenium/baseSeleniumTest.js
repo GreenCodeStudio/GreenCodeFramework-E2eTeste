@@ -11,7 +11,7 @@ module.exports = class BaseSeleniumTest {
         if(assert)
         name = './screens/' + file + '.png';
         else
-        name = './screens/additional' + file + '-' + (new Date() * 1) + '.png';
+        name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
         });
