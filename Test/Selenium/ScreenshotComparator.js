@@ -1,4 +1,5 @@
 import fs from "fs";
+const sharp = require("sharp");
 
 export const ScreenshotComparator = {
     async generateHtml() {
