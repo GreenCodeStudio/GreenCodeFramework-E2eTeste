@@ -30,7 +30,7 @@ module.exports = {
                     },]).toBuffer();
                 try {
                     console.log([...diffImg].slice(0, 100))
-                    console.log(sharp(diffImg)                        .stats())
+                    console.log(await sharp(diffImg)                        .stats())
                 }catch(ex){console.error(ex)}
                 diff = `data:image/png;base64,${diffImg.toString('base64')}`
             }
