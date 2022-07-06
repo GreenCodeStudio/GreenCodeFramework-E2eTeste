@@ -5,7 +5,7 @@ const fs = require('fs');
 const net = require('net');
 const Xvfb = require("xvfb");
 const path = require("path");
-const {ScreenshotComparator} = require("./ScreenshotComparator");
+const ScreenshotComparator = require("./ScreenshotComparator");
 asleep(60000).then(() => process.exit(1));
 
 function asleep(x) {

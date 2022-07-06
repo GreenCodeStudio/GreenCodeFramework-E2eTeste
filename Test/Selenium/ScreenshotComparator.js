@@ -1,7 +1,7 @@
 const sharp = require("sharp");
 const fs = require("fs");
 
-export const ScreenshotComparator = {
+module.exports = {
     async generateHtml() {
         let html = '<h1>Screnshot comparsion</h1>';
         for (const listComparsionElement of await this.listComparsion()) {
