@@ -51,6 +51,7 @@ function readDir(path) {
             if (fs.existsSync(testPath)) {
                 const obj = require(testPath);
                 log('obj:', obj);
+                obj.name=file;
                 tests.push(obj)
             }
         }
@@ -62,14 +63,25 @@ function readDir(path) {
                 await test.prepareTest();
             }
         }
+        let testsSummary=[];
         for (const test of testObjects) {
-            if (test.mainTest) {
-                log('mainTest:', test);
-                await test.mainTest();
-                await new Promise(resolve => setTimeout(resolve, 100))
+            try {
+                if (test.mainTest) {
+                    log('mainTest:', test);
+                    await test.mainTest();
+                    await new Promise(resolve => setTimeout(resolve, 100))
+                    testsSummary.push({name:test.constructor.name, success:true})
+                }
+            }catch(ex){
+                console.error(ex)
+                testsSummary.push({name:test.constructor.name, success:false})
             }
         }
         log('tests completed');
+        log(testsSummary)
+        if(testsSummary.find(x=>x.success===false)){
+            process.exit(3)
+        }
         if(await ScreenshotComparator.generateHtml()){
             console.log('found significant change on screnshots')
             process.exit(2)
