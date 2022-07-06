@@ -70,10 +70,10 @@ function readDir(path) {
             }
         }
         log('tests completed');
-        process.exit(0)//tmp
+        await ScreenshotComparator.generateHtml();
         driver.quit();
         xvfb.stopSync();
-        await ScreenshotComparator.generateHtml();
+        process.exit(0)//tmp
     } catch (e) {
         log('exception:', e);
         process.exit(1)
