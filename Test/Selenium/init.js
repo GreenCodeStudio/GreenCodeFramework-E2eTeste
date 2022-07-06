@@ -51,7 +51,7 @@ function readDir(path) {
             if (fs.existsSync(testPath)) {
                 const obj = require(testPath);
                 log('obj:', obj);
-                obj.name=file;
+                obj.moduleName=file;
                 tests.push(obj)
             }
         }
@@ -70,11 +70,11 @@ function readDir(path) {
                     log('mainTest:', test);
                     await test.mainTest();
                     await new Promise(resolve => setTimeout(resolve, 100))
-                    testsSummary.push({name:test.constructor.name, success:true})
+                    testsSummary.push({name:test.constructor.moduleName, success:true})
                 }
             }catch(ex){
                 console.error(ex)
-                testsSummary.push({name:test.constructor.name, success:false})
+                testsSummary.push({name:test.constructor.moduleName, success:false})
             }
         }
         log('tests completed');
