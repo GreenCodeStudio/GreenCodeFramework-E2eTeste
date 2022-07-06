@@ -24,10 +24,10 @@ module.exports = {
             if (fsClassic.existsSync('./screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
             let diff = null;
             if (approved && current) {
-                let diffImg = sharp('./ApprovedScrenshots/' + name)
+                let diffImg = await sharp('./ApprovedScrenshots/' + name)
                     .composite([{
                         input: './screens/' + name, top: 0, left: 0, blend: 'difference'
-                    },])
+                    },]).toBuffer()
                 diff = `data:image/png;base64,${diffImg.toString('base64')}`
             }
             return {approved, current, diff};
