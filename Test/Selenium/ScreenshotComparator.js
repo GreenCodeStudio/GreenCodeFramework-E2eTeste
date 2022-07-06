@@ -11,6 +11,7 @@ module.exports = {
        await  fs.writeFile('./screens/screnshotComparsion.html', html);
         console.log('written ./screens/screnshotComparsion.html')
     }, async listComparsion() {
+        console.log('a',fs.readdir);
         let names = [...await fs.readdir('./screens'), ...await fs.readdir('./ApprovedScrenshots')];
         names = names.filter(x => x.endsWith('.png'));
         names = [...new Set(names)];
