@@ -5,13 +5,13 @@ module.exports = class BaseSeleniumTest {
         this.driver = driver;
     }
 
-    async takeScreenshot(file = 'default', assert=false) {
+    async takeScreenshot(file = 'default', assert = false) {
         let image = await this.driver.takeScreenshot()
         let name;
-        if(assert)
-        name = './screens/' + file + '.png';
+        if (assert)
+            name = './screens/' + file + '.png';
         else
-        name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
+            name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
         });

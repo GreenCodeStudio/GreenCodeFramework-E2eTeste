@@ -45,8 +45,8 @@ module.exports = {
                     console.error(ex)
                 }
                 diff = `data:image/png;base64,${diffImg.toString('base64')}`
-            }else{
-                entropy=10000;
+            } else {
+                entropy = 10000;
             }
             return {approved, current, diff, diffNoticed, entropy, name};
         }));

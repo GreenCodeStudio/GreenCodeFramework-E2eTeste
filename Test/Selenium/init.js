@@ -1,4 +1,4 @@
-const {Builder, By, Key, until} = require('selenium-webdriver');
+const {Builder, By, Key, until, logging} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const util = require('util');
 const fs = require('fs');
@@ -37,11 +37,15 @@ function readDir(path) {
 
 (async function run() {
     try {
-        var Xvfb = require('xvfb');
-        var xvfb = new Xvfb();
-        xvfb.startSync();
+        try {
+            var Xvfb = require('xvfb');
+            var xvfb = new Xvfb();
+            xvfb.startSync();
+        }catch(ex){
+            console.warn(ex);
+        }
 
-        let driver = await new Builder().forBrowser('firefox').build();
+        let driver = await new Builder().forBrowser('firefox').setLoggingPrefs({browser: 'ALL' }).build();
 
         const files = await readDir("./modules/");
         let tests = [];
@@ -51,7 +55,7 @@ function readDir(path) {
             if (fs.existsSync(testPath)) {
                 const obj = require(testPath);
                 log('obj:', obj);
-                obj.moduleName=file;
+                obj.moduleName = file;
                 tests.push(obj)
             }
         }
@@ -63,26 +67,33 @@ function readDir(path) {
                 await test.prepareTest();
             }
         }
-        let testsSummary=[];
+        let testsSummary = [];
         for (const test of testObjects) {
             try {
                 if (test.mainTest) {
                     log('mainTest:', test);
                     await test.mainTest();
                     await new Promise(resolve => setTimeout(resolve, 100))
-                    testsSummary.push({name:test.constructor.moduleName, success:true})
+                    testsSummary.push({name: test.constructor.moduleName, success: true})
                 }
-            }catch(ex){
+            } catch (ex) {
                 console.error(ex)
-                testsSummary.push({name:test.constructor.moduleName, success:false})
+                testsSummary.push({name: test.constructor.moduleName, success: false})
+            }finally{
+                driver.manage().logs().get(logging.Type.BROWSER)
+                    .then(function(entries) {
+                        entries.forEach(function(entry) {
+                            console.log('[%s] %s', entry.level.name, entry.message);
+                        });
+                    });
             }
         }
         log('tests completed');
         log(testsSummary)
-        if(testsSummary.find(x=>x.success===false)){
+        if (testsSummary.find(x => x.success === false)) {
             process.exit(3)
         }
-        if(await ScreenshotComparator.generateHtml()){
+        if (await ScreenshotComparator.generateHtml()) {
             console.log('found significant change on screnshots')
             process.exit(2)
         }
