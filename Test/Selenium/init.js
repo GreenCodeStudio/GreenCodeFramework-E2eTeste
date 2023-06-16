@@ -1,21 +1,19 @@
-const {Builder, By, Key, until, logging} = require('selenium-webdriver');
+const { Builder, logging } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const util = require('util');
 const fs = require('fs');
-const net = require('net');
-const Xvfb = require("xvfb");
-const path = require("path");
-const ScreenshotComparator = require("./ScreenshotComparator");
-asleep(60000).then(() => process.exit(1));
+const path = require('path');
+const ScreenshotComparator = require('./ScreenshotComparator');
 
 function asleep(x) {
-    return new Promise(resolve => setTimeout(resolve, x))
+    return new Promise(resolve => setTimeout(resolve, x));
 }
 
 async function takeScreenshot(driver, file) {
-    let image = await driver.takeScreenshot()
-    fs.writeFile('./screens/' + file + '-' + (new Date() * 1) + '.png', image, 'base64', function (err) {
-        log(err);
+    let image = await driver.takeScreenshot();
+    fs.writeFile(`./screens/${file}-${Date.now()}.png`, image, 'base64', function (err) {
+        if (err) {
+            console.error(err);
+        }
     });
 }
 
@@ -25,29 +23,33 @@ function log(...args) {
 
 function readDir(path) {
     return new Promise((resolve, reject) => {
-        fs.readdir("./modules/", async (err, files) => {
+        fs.readdir(path, (err, files) => {
             if (err) {
                 reject(err);
             } else {
                 resolve(files);
             }
         });
-    })
+    });
 }
 
 (async function run() {
     try {
+        let driver;
         try {
-            var Xvfb = require('xvfb');
-            var xvfb = new Xvfb();
-            xvfb.startSync();
-        }catch(ex){
+            const xvfb = require('xvfb');
+            const xserver = new xvfb();
+            xserver.startSync();
+        } catch (ex) {
             console.warn(ex);
         }
 
-        let driver = await new Builder().forBrowser('firefox').setLoggingPrefs({browser: 'ALL' }).build();
+        driver = await new Builder()
+            .forBrowser('chrome')
+            .setLoggingPrefs({ browser: 'ALL' })
+            .build();
 
-        const files = await readDir("./modules/");
+        const files = await readDir('./modules/');
         let tests = [];
         for (const file of files) {
             const testPath = path.resolve(process.cwd(), `./modules/${file}/Test/Selenium/index.js`);
@@ -56,7 +58,7 @@ function readDir(path) {
                 const obj = require(testPath);
                 log('obj:', obj);
                 obj.moduleName = file;
-                tests.push(obj)
+                tests.push(obj);
             }
         }
         log('tests:', tests);
@@ -73,35 +75,34 @@ function readDir(path) {
                 if (test.mainTest) {
                     log('mainTest:', test);
                     await test.mainTest();
-                    await new Promise(resolve => setTimeout(resolve, 100))
-                    testsSummary.push({name: test.constructor.moduleName, success: true})
+                    await asleep(100);
+                    testsSummary.push({ name: test.constructor.moduleName, success: true });
                 }
             } catch (ex) {
-                console.error(ex)
-                testsSummary.push({name: test.constructor.moduleName, success: false})
-            }finally{
-                driver.manage().logs().get(logging.Type.BROWSER)
-                    .then(function(entries) {
-                        entries.forEach(function(entry) {
-                            console.log('[%s] %s', entry.level.name, entry.message);
-                        });
-                    });
+                console.error(ex);
+                testsSummary.push({ name: test.constructor.moduleName, success: false });
+            } finally {
+                const entries = await driver.manage().logs().get(logging.Type.BROWSER);
+                entries.forEach(function (entry) {
+                    console.log('[%s] %s', entry.level.name, entry.message);
+                });
             }
         }
         log('tests completed');
-        log(testsSummary)
+        log(testsSummary);
         if (testsSummary.find(x => x.success === false)) {
-            process.exit(3)
+            process.exit(3);
         }
         if (await ScreenshotComparator.generateHtml()) {
-            console.log('found significant change on screnshots')
-            process.exit(2)
+            console.log('found significant change on screenshots');
+            process.exit(2);
         }
         driver.quit();
-        xvfb.stopSync();
-        process.exit(0)//tmp
+        const xserver = require('xvfb');
+        xserver.stopSync();
+        process.exit(0);
     } catch (e) {
         log('exception:', e);
-        process.exit(1)
+        process.exit(1);
     }
 })();
