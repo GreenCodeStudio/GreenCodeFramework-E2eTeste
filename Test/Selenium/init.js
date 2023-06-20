@@ -1,5 +1,4 @@
 const { Builder, logging } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
@@ -21,9 +20,9 @@ function log(...args) {
     console.log(new Date(), ...args);
 }
 
-function readDir(path) {
+function readDir(directory) {
     return new Promise((resolve, reject) => {
-        fs.readdir(path, (err, files) => {
+        fs.readdir(directory, (err, files) => {
             if (err) {
                 reject(err);
             } else {
@@ -35,16 +34,11 @@ function readDir(path) {
 
 (async function run() {
     try {
-        let driver;
-        try {
-            const xvfb = require('xvfb');
-            const xserver = new xvfb();
-            xserver.startSync();
-        } catch (ex) {
-            console.warn(ex);
-        }
+        const xvfb = require('xvfb');
+        const xserver = new xvfb();
+        xserver.startSync();
 
-        driver = await new Builder()
+        const driver = await new Builder()
             .forBrowser('chrome')
             .setLoggingPrefs({ browser: 'ALL' })
             .build();
@@ -98,7 +92,6 @@ function readDir(path) {
             process.exit(2);
         }
         driver.quit();
-        const xserver = require('xvfb');
         xserver.stopSync();
         process.exit(0);
     } catch (e) {
