@@ -36,6 +36,7 @@ function readDir(path) {
 (async function run() {
     try {
         let driver;
+        if (process.platform != "win32")
         try {
             const xvfb = require('xvfb');
             const xserver = new xvfb();
@@ -45,7 +46,7 @@ function readDir(path) {
         }
 
         driver = await new Builder()
-            .forBrowser('chrome')
+            .forBrowser('firefox')
             .setLoggingPrefs({ browser: 'ALL' })
             .build();
 
