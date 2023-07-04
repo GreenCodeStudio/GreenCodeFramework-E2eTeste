@@ -33,6 +33,6 @@ module.exports = class BaseSeleniumTest {
     }
 
     async openURL(url) {
-        await this.driver.get('http://localhost' + url);
+        await this.driver.get('http://localhost:8080' + url);
     }
 }

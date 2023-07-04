@@ -1,5 +1,4 @@
 const { Builder, logging } = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
