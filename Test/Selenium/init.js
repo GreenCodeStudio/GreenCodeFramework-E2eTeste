@@ -35,7 +35,7 @@ function readDir(path) {
 (async function run() {
     try {
         let driver;
-        if (process.platform != "win32")
+        if (process.platform !== "win32")
         try {
             const xvfb = require('xvfb');
             const xserver = new xvfb();
