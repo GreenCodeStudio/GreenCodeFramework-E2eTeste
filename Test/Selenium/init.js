@@ -2,9 +2,9 @@ const { Builder, logging } = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
-// const firefox = require("selenium-webdriver/firefox");
-// const options = new firefox.Options();
-// options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+ const firefox = require("selenium-webdriver/firefox");
+ const options = new firefox.Options();
+ options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
 
 
 function asleep(x) {
@@ -50,7 +50,7 @@ function readDir(path) {
 
         driver = await new Builder()
             .forBrowser('firefox')
-            // .setFirefoxOptions(options)
+             .setFirefoxOptions(options)
             // .setFirefoxService(new firefox.ServiceBuilder("C:\\Users\\Piotr\\Desktop\\drivers\\geckodriver.exe"))
             .setLoggingPrefs({ browser: 'ALL' })
             .build();
@@ -91,6 +91,7 @@ function readDir(path) {
                 const entries = await driver.manage().logs().get(logging.Type.BROWSER);
                 entries.forEach(function (entry) {
                     console.log('[%s] %s', entry.level.name, entry.message);
+                    console.log(entry);
                 });
             }
         }
