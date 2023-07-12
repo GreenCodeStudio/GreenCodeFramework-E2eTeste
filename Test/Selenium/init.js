@@ -4,7 +4,9 @@ const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
  const firefox = require("selenium-webdriver/firefox");
  const options = new firefox.Options();
- options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+if (process.platform == "win32") {
+    options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+}
 
 
 function asleep(x) {
@@ -88,11 +90,15 @@ function readDir(path) {
                 console.error(ex);
                 testsSummary.push({ name: test.constructor.moduleName, success: false });
             } finally {
-                const entries = await driver.manage().logs().get(logging.Type.BROWSER);
-                entries.forEach(function (entry) {
-                    console.log('[%s] %s', entry.level.name, entry.message);
-                    console.log(entry);
-                });
+                try {
+                    const entries = await driver.manage().logs().get(logging.Type.BROWSER);
+                    entries.forEach(function (entry) {
+                        console.log('[%s] %s', entry.level.name, entry.message);
+                        console.log(entry);
+                    });
+                } catch (ex) {
+                    console.warn(ex);
+                }
             }
         }
         log('tests completed');
