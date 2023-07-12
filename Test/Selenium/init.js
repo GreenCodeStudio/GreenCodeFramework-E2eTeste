@@ -2,6 +2,10 @@ const { Builder, logging } = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
+// const firefox = require("selenium-webdriver/firefox");
+// const options = new firefox.Options();
+// options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
+
 
 function asleep(x) {
     return new Promise(resolve => setTimeout(resolve, x));
@@ -46,6 +50,8 @@ function readDir(path) {
 
         driver = await new Builder()
             .forBrowser('firefox')
+            // .setFirefoxOptions(options)
+            // .setFirefoxService(new firefox.ServiceBuilder("C:\\Users\\Piotr\\Desktop\\drivers\\geckodriver.exe"))
             .setLoggingPrefs({ browser: 'ALL' })
             .build();
 
@@ -97,7 +103,7 @@ function readDir(path) {
             console.log('found significant change on screenshots');
             process.exit(2);
         }
-        driver.quit();
+        await driver.quit();
         const xserver = require('xvfb');
         xserver.stopSync();
         process.exit(0);
