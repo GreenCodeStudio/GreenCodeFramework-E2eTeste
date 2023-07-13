@@ -41,10 +41,11 @@ function readDir(dirPath) {
 (async function run() {
     try {
         let driver;
+        let xserver;
         if (process.platform !== "win32") {
             try {
                 const xvfb = require('xvfb');
-                const xserver = new xvfb();
+                xserver = new xvfb();
                 xserver.startSync();
             } catch (ex) {
                 console.warn(ex);
@@ -112,7 +113,6 @@ function readDir(dirPath) {
         }
         await driver.quit();
         if (process.platform !== "win32") {
-            const xserver = require('xvfb');
             xserver.stopSync();
         }
         process.exit(0);
