@@ -2,12 +2,12 @@ const { Builder, logging } = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
- const firefox = require("selenium-webdriver/firefox");
- const options = new firefox.Options();
-if (process.platform == "win32") {
+const firefox = require("selenium-webdriver/firefox");
+const options = new firefox.Options();
+
+if (process.platform === "win32") {
     options.setBinary("C:\\Program Files\\Mozilla Firefox\\firefox.exe");
 }
-
 
 function asleep(x) {
     return new Promise(resolve => setTimeout(resolve, x));
@@ -26,9 +26,9 @@ function log(...args) {
     console.log(new Date(), ...args);
 }
 
-function readDir(path) {
+function readDir(dirPath) {
     return new Promise((resolve, reject) => {
-        fs.readdir(path, (err, files) => {
+        fs.readdir(dirPath, (err, files) => {
             if (err) {
                 reject(err);
             } else {
@@ -41,19 +41,19 @@ function readDir(path) {
 (async function run() {
     try {
         let driver;
-        if (process.platform !== "win32")
-        try {
-            const xvfb = require('xvfb');
-            const xserver = new xvfb();
-            xserver.startSync();
-        } catch (ex) {
-            console.warn(ex);
+        if (process.platform !== "win32") {
+            try {
+                const xvfb = require('xvfb');
+                const xserver = new xvfb();
+                xserver.startSync();
+            } catch (ex) {
+                console.warn(ex);
+            }
         }
 
         driver = await new Builder()
             .forBrowser('firefox')
-             .setFirefoxOptions(options)
-            // .setFirefoxService(new firefox.ServiceBuilder("C:\\Users\\Piotr\\Desktop\\drivers\\geckodriver.exe"))
+            .setFirefoxOptions(options)
             .setLoggingPrefs({ browser: 'ALL' })
             .build();
 
@@ -111,8 +111,10 @@ function readDir(path) {
             process.exit(2);
         }
         await driver.quit();
-        const xserver = require('xvfb');
-        xserver.stopSync();
+        if (process.platform !== "win32") {
+            const xserver = require('xvfb');
+            xserver.stopSync();
+        }
         process.exit(0);
     } catch (e) {
         log('exception:', e);
