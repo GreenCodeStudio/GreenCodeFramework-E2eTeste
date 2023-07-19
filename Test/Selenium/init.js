@@ -110,6 +110,8 @@ function readDir(dirPath) {
         if (await ScreenshotComparator.generateHtml()) {
             console.log('found significant change on screenshots');
             process.exit(2);
+        }else{
+            console.log('no significant change on screenshots');
         }
         await driver.quit();
         if (process.platform !== "win32") {

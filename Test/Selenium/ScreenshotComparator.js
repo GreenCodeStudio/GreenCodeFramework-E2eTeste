@@ -17,11 +17,9 @@ module.exports = {
         console.log('written ./screens/screnshotComparsion.html')
         return diffNoticed;
     }, async listComparsion() {
-        console.log('a', fs.readdir);
         let names = [...await fs.readdir('./screens'), ...await fs.readdir('./ApprovedScrenshots')];
         names = names.filter(x => x.endsWith('.png'));
         names = [...new Set(names)];
-        console.log({names})
         return await Promise.all(names.map(async name => {
             let approved = null;
             if (fsClassic.existsSync('./ApprovedScrenshots/' + name)) approved = 'data:image/png;base64,' + await fs.readFile('./ApprovedScrenshots/' + name, {encoding: 'base64'});
@@ -39,7 +37,6 @@ module.exports = {
                 diffNoticed = stats.channels[0].max > 50 || stats.channels[1].max > 50 || stats.channels[2].max > 50
                 entropy = stats.entropy
                 try {
-                    console.log([...diffImg].slice(0, 100))
                     console.log(await sharp(diffImg).stats())
                 } catch (ex) {
                     console.error(ex)
