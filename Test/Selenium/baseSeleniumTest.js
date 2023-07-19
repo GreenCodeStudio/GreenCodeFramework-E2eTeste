@@ -1,4 +1,5 @@
 const fs = require("fs");
+const {until, By} = require("selenium-webdriver");
 
 module.exports = class BaseSeleniumTest {
     constructor(driver) {
@@ -34,5 +35,24 @@ module.exports = class BaseSeleniumTest {
 
     async openURL(url) {
         await this.driver.get('http://localhost:8080' + url);
+    }
+
+    async scrollTo(selector) {
+        await this.driver.executeScript(`document.querySelector(selector).scrollIntoView()`);
+    }
+    async clickElement(selector) {
+        const element = await this.waitForElement(selector);
+        await this.driver.executeScript("arguments[0].scrollIntoView();", element);
+        await element.click();
+    }
+
+    async sendKeysToElement(selector, keys) {
+        const element = await this.waitForElement(selector);
+        await element.sendKeys(keys);
+    }
+
+    async waitForElement(selector) {
+        await this.driver.wait(until.elementLocated(By.css(selector)));
+        return await this.driver.findElement(By.css(selector));
     }
 }
