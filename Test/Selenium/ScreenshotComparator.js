@@ -10,6 +10,7 @@ module.exports = {
         let list = await this.listComparsion();
         list.sort((a, b) => a.entropy - b.entropy);
         for (const listComparsionElement of list) {
+            console.log('aaaaaaaaa', diffNoticed, listComparsionElement.diffNoticed)
             html += `<div><h2>${listComparsionElement.name}</h2><img src="${listComparsionElement.diff}"><img src="${listComparsionElement.approved}"><img src="${listComparsionElement.current}"></div>`
             diffNoticed = diffNoticed || listComparsionElement.diffNoticed;
         }
@@ -35,6 +36,7 @@ module.exports = {
                     },]).toBuffer();
                 let stats = await sharp(diffImg).stats();
                 diffNoticed = stats.channels[0].max > 50 || stats.channels[1].max > 50 || stats.channels[2].max > 50
+                console.log('Max value', Math.max(stats.channels[0].max, stats.channels[1].max, stats.channels[2].max));
                 entropy = stats.entropy
                 try {
                     console.log(await sharp(diffImg).stats())
