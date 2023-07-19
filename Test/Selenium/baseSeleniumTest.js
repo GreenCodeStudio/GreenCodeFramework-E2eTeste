@@ -52,7 +52,15 @@ module.exports = class BaseSeleniumTest {
     }
 
     async waitForElement(selector) {
-        await this.driver.wait(until.elementLocated(By.css(selector)));
+        let completed=false
+        const realWait=this.driver.wait(until.elementLocated(By.css(selector)));
+        const timeout=this.asleep(10000);
+        realWait.then(()=>completed=true)
+        timeout.then(()=>{
+            if(!completed)
+                console.error('waiting for element timeout ', selector)
+        })
+        await Promise.race([realWait,timeout])
         return await this.driver.findElement(By.css(selector));
     }
 }
