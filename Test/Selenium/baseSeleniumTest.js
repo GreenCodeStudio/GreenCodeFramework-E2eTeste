@@ -38,7 +38,7 @@ module.exports = class BaseSeleniumTest {
     }
 
     async scrollTo(selector) {
-        await this.driver.executeScript(`document.querySelector(selector).scrollIntoView()`);
+        await this.driver.executeScript(`document.querySelector(arguments[0]).scrollIntoView()`, selector);
     }
     async clickElement(selector) {
         const element = await this.waitForElement(selector);
