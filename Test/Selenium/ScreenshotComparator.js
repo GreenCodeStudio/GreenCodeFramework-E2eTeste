@@ -27,7 +27,7 @@ module.exports = {
             let current = null;
             if (fsClassic.existsSync('./screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
             let diff = null;
-            let diffnoticed = false;
+            let diffNoticed = false;
             let entropy = 0;
             if (approved && current) {
                 let diffImg = await sharp('./ApprovedScrenshots/' + name)
