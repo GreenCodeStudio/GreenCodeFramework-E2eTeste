@@ -14,15 +14,16 @@ module.exports = class BaseSeleniumTest {
             name = './screens/' + file + '.png';
         else
             name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
-        if (!fs.existsSync('./screens/')){
+        if (!fs.existsSync('./screens/')) {
             fs.mkdirSync('./screens/');
         }
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
         });
-        E2eTestLog.screnshot(image);
+        E2eTestLog.screnshot(image, file);
         this.log('Saving screnshot', name);
     }
+
     log(...args) {
         console.log(new Date(), ...args);
     }
@@ -38,38 +39,39 @@ module.exports = class BaseSeleniumTest {
     }
 
     async openURL(url) {
-        E2eTestLog.paragraph('Opening URL: '+url);
+        E2eTestLog.paragraph('Opening URL: ' + url);
         await this.driver.get('http://localhost:8080' + url);
     }
 
     async scrollTo(selector) {
-        E2eTestLog.paragraph('Scrolling to: '+selector);
+        E2eTestLog.paragraph('Scrolling to: ' + selector);
         await this.driver.executeScript(`document.querySelector(arguments[0]).scrollIntoView()`, selector);
     }
+
     async clickElement(selector) {
-        E2eTestLog.paragraph('Clicking element: '+selector);
+        E2eTestLog.paragraph('Clicking element: ' + selector);
         const element = await this.waitForElement(selector);
         await this.driver.executeScript("arguments[0].scrollIntoView();", element);
         await element.click();
     }
 
     async sendKeysToElement(selector, keys) {
-        E2eTestLog.paragraph('Sending keys: '+keys+' to element: '+selector);
+        E2eTestLog.paragraph('Sending keys: ' + keys + ' to element: ' + selector);
         const element = await this.waitForElement(selector);
         await element.sendKeys(keys);
     }
 
     async waitForElement(selector) {
-        E2eTestLog.paragraph('Waiting for element: '+selector);
-        let completed=false
-        const realWait=this.driver.wait(until.elementLocated(By.css(selector)));
-        const timeout=this.asleep(10000);
-        realWait.then(()=>completed=true)
-        timeout.then(()=>{
-            if(!completed)
+        E2eTestLog.paragraph('Waiting for element: ' + selector);
+        let completed = false
+        const realWait = this.driver.wait(until.elementLocated(By.css(selector)));
+        const timeout = this.asleep(10000);
+        realWait.then(() => completed = true)
+        timeout.then(() => {
+            if (!completed)
                 console.error('waiting for element timeout ', selector)
         })
-        await Promise.race([realWait,timeout])
+        await Promise.race([realWait, timeout])
         return await this.driver.findElement(By.css(selector));
     }
 
