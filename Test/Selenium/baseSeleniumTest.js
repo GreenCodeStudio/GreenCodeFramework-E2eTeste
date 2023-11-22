@@ -49,9 +49,9 @@ module.exports = class BaseSeleniumTest {
     }
 
     async clickElement(selector) {
-        E2eTestLog.paragraph('Clicking element: ' + selector);
         const element = await this.waitForElement(selector);
         await this.driver.executeScript("arguments[0].scrollIntoView();", element);
+        E2eTestLog.paragraph('Clicking element: ' + selector);
         await element.click();
     }
 
