@@ -1,4 +1,4 @@
-const { Builder, logging } = require('selenium-webdriver');
+const {Builder, logging} = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
@@ -56,7 +56,7 @@ function readDir(dirPath) {
         driver = await new Builder()
             .forBrowser('firefox')
             .setFirefoxOptions(options)
-            .setLoggingPrefs({ browser: 'ALL' })
+            .setLoggingPrefs({browser: 'ALL'})
             .build();
 
         const files = await readDir('./modules/');
@@ -67,8 +67,14 @@ function readDir(dirPath) {
             if (fs.existsSync(testPath)) {
                 const obj = require(testPath);
                 log('obj:', obj);
-                obj.moduleName = file;
-                tests.push(obj);
+                if (obj instanceof Array) {
+                    obj.forEach(x => x.moduleName = file)
+                    tests.push(...obj);
+                }
+                else {
+                    obj.moduleName = file;
+                    tests.push(obj);
+                }
             }
         }
         log('tests:', tests);
@@ -88,11 +94,11 @@ function readDir(dirPath) {
                     log('mainTest:', test);
                     await test.mainTest();
                     await asleep(100);
-                    testsSummary.push({ name: test.constructor.moduleName, success: true });
+                    testsSummary.push({name: test.constructor.moduleName, success: true});
                 }
             } catch (ex) {
                 console.error(ex);
-                testsSummary.push({ name: test.constructor.moduleName, success: false });
+                testsSummary.push({name: test.constructor.moduleName, success: false});
             } finally {
                 try {
                     const entries = await driver.manage().logs().get(logging.Type.BROWSER);
@@ -117,7 +123,7 @@ function readDir(dirPath) {
         if (await ScreenshotComparator.generateHtml()) {
             console.log('found significant change on screenshots');
             process.exit(2);
-        }else{
+        } else {
             console.log('no significant change on screenshots');
         }
         await driver.quit();
