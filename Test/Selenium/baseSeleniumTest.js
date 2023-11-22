@@ -1,5 +1,5 @@
 const fs = require("fs");
-const {until, By} = require("selenium-webdriver");
+const {until, By, Key} = require("selenium-webdriver");
 const {E2eTestLog} = require("./E2eTestLog");
 
 module.exports = class BaseSeleniumTest {
@@ -56,9 +56,14 @@ module.exports = class BaseSeleniumTest {
     }
 
     async sendKeysToElement(selector, keys) {
-        E2eTestLog.paragraph('Sending keys: ' + keys + ' to element: ' + selector);
         const element = await this.waitForElement(selector);
+        E2eTestLog.paragraph('Sending keys: ' + keys + ' to element: ' + selector);
         await element.sendKeys(keys);
+    }
+    async sendEnterToElement(selector) {
+        const element = await this.waitForElement(selector);
+        E2eTestLog.paragraph('Sending enter to element: ' + selector);
+        await element.sendKeys(Key.RETURN);
     }
 
     async waitForElement(selector) {
