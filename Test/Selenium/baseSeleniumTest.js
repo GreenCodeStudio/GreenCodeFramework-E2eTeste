@@ -65,4 +65,5 @@ module.exports = class BaseSeleniumTest {
         await Promise.race([realWait,timeout])
         return await this.driver.findElement(By.css(selector));
     }
+
 }
