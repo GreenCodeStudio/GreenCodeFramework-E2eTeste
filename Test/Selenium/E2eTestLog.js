@@ -25,3 +25,4 @@ module.exports= {
         }
     }
 }
+module.exports.E2eTestLog.init()
