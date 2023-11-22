@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const ScreenshotComparator = require('./ScreenshotComparator');
 const firefox = require("selenium-webdriver/firefox");
+const {E2eTestLog} = require("./E2eTestLog");
 const options = new firefox.Options();
 
 if (process.platform === "win32") {
@@ -75,6 +76,7 @@ function readDir(dirPath) {
         for (const test of testObjects) {
             if (test.prepareTest) {
                 log('prepareTest:', test);
+                E2eTestLog.header(test.constructor.moduleName);
                 await test.prepareTest();
             }
         }
@@ -82,6 +84,7 @@ function readDir(dirPath) {
         for (const test of testObjects) {
             try {
                 if (test.mainTest) {
+                    E2eTestLog.header(test.constructor.moduleName);
                     log('mainTest:', test);
                     await test.mainTest();
                     await asleep(100);
@@ -104,6 +107,10 @@ function readDir(dirPath) {
         }
         log('tests completed');
         log(testsSummary);
+        E2eTestLog.header('Tests summary');
+        for (const test of testsSummary) {
+            E2eTestLog.paragraph(`Test ${test.name} ${test.success ? 'success' : 'failed'}`);
+        }
         if (testsSummary.find(x => x.success === false)) {
             process.exit(3);
         }

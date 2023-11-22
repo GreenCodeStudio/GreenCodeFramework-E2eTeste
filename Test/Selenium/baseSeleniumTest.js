@@ -1,5 +1,6 @@
 const fs = require("fs");
 const {until, By} = require("selenium-webdriver");
+const {E2eTestLog} = require("./E2eTestLog");
 
 module.exports = class BaseSeleniumTest {
     constructor(driver) {
@@ -19,6 +20,7 @@ module.exports = class BaseSeleniumTest {
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
         });
+        E2eTestLog.screnshot(image);
         this.log('Saving screnshot', name);
     }
     log(...args) {
@@ -36,24 +38,29 @@ module.exports = class BaseSeleniumTest {
     }
 
     async openURL(url) {
+        E2eTestLog.paragraph('Opening URL: '+url);
         await this.driver.get('http://localhost:8080' + url);
     }
 
     async scrollTo(selector) {
+        E2eTestLog.paragraph('Scrolling to: '+selector);
         await this.driver.executeScript(`document.querySelector(arguments[0]).scrollIntoView()`, selector);
     }
     async clickElement(selector) {
+        E2eTestLog.paragraph('Clicking element: '+selector);
         const element = await this.waitForElement(selector);
         await this.driver.executeScript("arguments[0].scrollIntoView();", element);
         await element.click();
     }
 
     async sendKeysToElement(selector, keys) {
+        E2eTestLog.paragraph('Sending keys: '+keys+' to element: '+selector);
         const element = await this.waitForElement(selector);
         await element.sendKeys(keys);
     }
 
     async waitForElement(selector) {
+        E2eTestLog.paragraph('Waiting for element: '+selector);
         let completed=false
         const realWait=this.driver.wait(until.elementLocated(By.css(selector)));
         const timeout=this.asleep(10000);
