@@ -13,12 +13,14 @@ module.exports = class BaseSeleniumTest {
             name = './screens/' + file + '.png';
         else
             name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
+        if (!fs.existsSync('./screens/')){
+            fs.mkdirSync('./screens/');
+        }
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
         });
         this.log('Saving screnshot', name);
     }
-
     log(...args) {
         console.log(new Date(), ...args);
     }
