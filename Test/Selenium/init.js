@@ -16,7 +16,7 @@ function asleep(x) {
 
 async function takeScreenshot(driver, file) {
     let image = await driver.takeScreenshot();
-    fs.writeFile(`./screens/${file}-${Date.now()}.png`, image, 'base64', function (err) {
+    fs.writeFile(`./tmp/screens/${file}-${Date.now()}.png`, image, 'base64', function (err) {
         if (err) {
             console.error(err);
         }

@@ -14,25 +14,25 @@ module.exports = {
             html += `<div><h2>${listComparsionElement.name}</h2><img src="${listComparsionElement.diff}"><img src="${listComparsionElement.approved}"><img src="${listComparsionElement.current}"></div>`
             diffNoticed = diffNoticed || listComparsionElement.diffNoticed;
         }
-        await fs.writeFile('./screens/screnshotComparsion.html', html);
-        console.log('written ./screens/screnshotComparsion.html')
+        await fs.writeFile('./tmp/screens/screnshotComparsion.html', html);
+        console.log('written ./tmp/screens/screnshotComparsion.html')
         return diffNoticed;
     }, async listComparsion() {
-        let names = [...await fs.readdir('./screens'), ...await fs.readdir('./ApprovedScrenshots')];
+        let names = [...await fs.readdir('./tmp/screens'), ...await fs.readdir('./tests/ApprovedScrenshots')];
         names = names.filter(x => x.endsWith('.png'));
         names = [...new Set(names)];
         return await Promise.all(names.map(async name => {
             let approved = null;
-            if (fsClassic.existsSync('./ApprovedScrenshots/' + name)) approved = 'data:image/png;base64,' + await fs.readFile('./ApprovedScrenshots/' + name, {encoding: 'base64'});
+            if (fsClassic.existsSync('./tests/ApprovedScrenshots/' + name)) approved = 'data:image/png;base64,' + await fs.readFile('./tests/ApprovedScrenshots/' + name, {encoding: 'base64'});
             let current = null;
-            if (fsClassic.existsSync('./screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
+            if (fsClassic.existsSync('./tmp/screens/' + name)) current = 'data:image/png;base64,' + await fs.readFile('./screens/' + name, {encoding: 'base64'});
             let diff = null;
             let diffNoticed = false;
             let entropy = 0;
             if (approved && current) {
-                let diffImg = await sharp('./ApprovedScrenshots/' + name)
+                let diffImg = await sharp('./tests/ApprovedScrenshots/' + name)
                     .composite([{
-                        input: './screens/' + name, top: 0, left: 0, blend: 'difference'
+                        input: './tmp/screens/' + name, top: 0, left: 0, blend: 'difference'
                     },]).toBuffer();
                 let stats = await sharp(diffImg).stats();
                 diffNoticed = stats.channels[0].max > 50 || stats.channels[1].max > 50 || stats.channels[2].max > 50

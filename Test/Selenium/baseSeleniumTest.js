@@ -11,11 +11,17 @@ module.exports = class BaseSeleniumTest {
         let image = await this.driver.takeScreenshot()
         let name;
         if (assert)
-            name = './screens/' + file + '.png';
+            name = './tmp/screens/' + file + '.png';
         else
-            name = './screens/additional/' + file + '-' + (new Date() * 1) + '.png';
-        if (!fs.existsSync('./screens/')) {
-            fs.mkdirSync('./screens/');
+            name = './tmp/screens/additional/' + file + '-' + (new Date() * 1) + '.png';
+        if (!fs.existsSync('./tmp/')) {
+            fs.mkdirSync('./tmp/');
+        }
+        if (!fs.existsSync('./tmp/screens/')) {
+            fs.mkdirSync('./tmp/screens/');
+        }
+        if (!fs.existsSync('./tmp/screens/additional')) {
+            fs.mkdirSync('./tmp/screens/additional');
         }
         fs.writeFile(name, image, 'base64', (err) => {
             this.log(err);
@@ -60,6 +66,7 @@ module.exports = class BaseSeleniumTest {
         E2eTestLog.paragraph('Sending keys: ' + keys + ' to element: ' + selector);
         await element.sendKeys(keys);
     }
+
     async sendEnterToElement(selector) {
         const element = await this.waitForElement(selector);
         E2eTestLog.paragraph('Sending enter to element: ' + selector);
