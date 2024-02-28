@@ -3,7 +3,7 @@ module.exports= {
     E2eTestLog: {
         file:fs.openSync('./tmp/testLog.html', 'w'),
         init(){
-            const fileStart='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Test log</title></head><style>img{display: block;}</style><body>';
+            const fileStart=fs.readFileSync('./modules/E2eTests/Test/Selenium/testLogStart.html');
             fs.writeFile(this.file, fileStart, '', (err) => {
                 console.error(err);
             });
@@ -20,6 +20,11 @@ module.exports= {
         },
         screnshot(image, name){
             fs.writeFile(this.file, `<img src="data:image/png;base64,${image}" title="${name}">`, '', (err) => {
+                console.error(err);
+            });
+        },
+        exception(ex){
+            fs.writeFile(this.file, `<pre style="background: #faa">${ex}\r\n\r\n${ex.stack}</pre>`, '', (err) => {
                 console.error(err);
             });
         }

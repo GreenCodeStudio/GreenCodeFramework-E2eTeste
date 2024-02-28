@@ -41,6 +41,7 @@ function readDir(dirPath) {
 
 (async function run() {
     try {
+        E2eTestLog.paragraph(`Starting tests on platform ${process.platform} host ${process.env.HOSTNAME} date ${new Date().toISOString()}`)
         let driver;
         let xserver;
         if (process.platform !== "win32") {
@@ -90,15 +91,16 @@ function readDir(dirPath) {
         for (const test of testObjects) {
             try {
                 if (test.mainTest) {
-                    E2eTestLog.header(test.constructor.moduleName);
+                    E2eTestLog.header(test.constructor.moduleName+'/'+test.constructor.name);
                     log('mainTest:', test);
                     await test.mainTest();
                     await asleep(100);
-                    testsSummary.push({name: test.constructor.moduleName, success: true});
+                    testsSummary.push({name: test.constructor.moduleName+'/'+test.constructor.name, success: true});
                 }
             } catch (ex) {
                 console.error(ex);
-                testsSummary.push({name: test.constructor.moduleName, success: false});
+                E2eTestLog.exception(ex);
+                testsSummary.push({name: test.constructor.moduleName+'/'+test.constructor.name, success: false});
             } finally {
                 try {
                     const entries = await driver.manage().logs().get(logging.Type.BROWSER);
